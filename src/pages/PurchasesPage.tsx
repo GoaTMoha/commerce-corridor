@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Layout } from "@/components/layout/Layout";
 import { useAppStore } from "@/lib/store";
@@ -124,7 +123,7 @@ const PurchasesPage = () => {
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction variant="destructive" onClick={confirmDelete}>
+                <AlertDialogAction onClick={confirmDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
                   Delete
                 </AlertDialogAction>
               </AlertDialogFooter>

@@ -59,7 +59,13 @@ export function ClientForm({ open, onOpenChange, mode, client }: ClientFormProps
 
   const onSubmit = (data: FormValues) => {
     if (mode === "add") {
-      addClient(data);
+      // Ensure all fields are required as per the Omit<Client> type
+      addClient({
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        address: data.address,
+      });
       toast({
         title: "Client added",
         description: "The new client has been added successfully.",
