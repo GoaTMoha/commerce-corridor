@@ -1,101 +1,108 @@
 
-import React, { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { cn } from "@/lib/utils";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
-  LayoutDashboard,
+  Home,
   Users,
   Package,
-  BarChart3,
   ShoppingBag,
+  Truck,
+  BarChart2,
   Menu,
   X,
 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { cn } from "@/lib/utils";
 
 const navItems = [
-  { path: "/", label: "Dashboard", icon: <LayoutDashboard className="h-5 w-5" /> },
-  { path: "/clients", label: "Clients", icon: <Users className="h-5 w-5" /> },
-  { path: "/products", label: "Products", icon: <Package className="h-5 w-5" /> },
-  { path: "/inventory", label: "Inventory", icon: <BarChart3 className="h-5 w-5" /> },
-  { path: "/sales", label: "Sales", icon: <ShoppingBag className="h-5 w-5" /> },
-  { path: "/purchases", label: "Purchases", icon: <ShoppingBag className="h-5 w-5" /> },
+  { path: "/", label: "Dashboard", icon: Home },
+  { path: "/clients", label: "Clients", icon: Users },
+  { path: "/products", label: "Products", icon: Package },
+  { path: "/inventory", label: "Inventory", icon: BarChart2 },
+  { path: "/sales", label: "Sales", icon: ShoppingBag },
+  { path: "/purchases", label: "Purchases", icon: Truck },
 ];
 
 export function Navbar() {
+  const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  
+  // Close mobile menu when route changes
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [location.pathname]);
 
-  const toggleMenu = () => setIsMenuOpen((prev) => !prev);
+  const NavLink = ({ path, label, icon: Icon }: { path: string; label: string; icon: any }) => {
+    const isActive = location.pathname === path;
+    
+    return (
+      <Link
+        to={path}
+        className={cn(
+          "flex items-center space-x-2 rounded-md px-3 py-2 text-sm transition-colors",
+          isActive
+            ? "bg-accent text-accent-foreground"
+            : "text-muted-foreground hover:bg-muted hover:text-primary"
+        )}
+      >
+        <Icon size={16} />
+        <span>{label}</span>
+      </Link>
+    );
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center justify-between py-4">
-        <div className="flex items-center gap-2">
+      <div className="container flex h-14 items-center">
+        <div className="mr-4 hidden md:flex">
           <Link to="/" className="flex items-center space-x-2">
-            <Package className="h-6 w-6 text-primary" />
-            <span className="text-xl font-semibold">GestiStore</span>
+            <ShoppingBag className="h-6 w-6" />
+            <span className="font-bold">Store Manager</span>
           </Link>
-        </div>
-
-        {/* Desktop navigation */}
-        <nav className="hidden md:flex items-center gap-6">
-          {navItems.map((item) => (
-            <Link
-              key={item.path}
-              to={item.path}
-              className={cn(
-                "flex items-center gap-2 text-sm font-medium transition-colors hover:text-primary",
-                location.pathname === item.path
-                  ? "text-primary"
-                  : "text-muted-foreground"
-              )}
-            >
-              {item.icon}
-              {item.label}
-            </Link>
-          ))}
-        </nav>
-
-        {/* Mobile menu button */}
-        <Button
-          variant="ghost"
-          size="icon"
-          className="md:hidden"
-          onClick={toggleMenu}
-          aria-label="Toggle menu"
-        >
-          {isMenuOpen ? (
-            <X className="h-6 w-6" />
-          ) : (
-            <Menu className="h-6 w-6" />
-          )}
-        </Button>
-      </div>
-
-      {/* Mobile navigation */}
-      {isMenuOpen && (
-        <div className="md:hidden border-t animate-slide-in-down">
-          <nav className="grid grid-cols-2 gap-2 p-4">
+          <nav className="flex items-center space-x-1 ml-6">
             {navItems.map((item) => (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={cn(
-                  "flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors",
-                  location.pathname === item.path
-                    ? "bg-primary/10 text-primary"
-                    : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-                )}
-                onClick={() => setIsMenuOpen(false)}
-              >
-                {item.icon}
-                {item.label}
-              </Link>
+              <NavLink key={item.path} {...item} />
             ))}
           </nav>
         </div>
-      )}
+        
+        <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
+          <div className="w-full flex-1 md:w-auto md:flex-none">
+            <div className="flex md:hidden items-center">
+              <Link to="/" className="flex items-center mr-2">
+                <ShoppingBag className="h-6 w-6 mr-2" />
+                <span className="font-bold">Store Manager</span>
+              </Link>
+              
+              <div className="flex-1"></div>
+              
+              <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+                <SheetTrigger asChild>
+                  <Button variant="ghost" size="icon" className="md:hidden">
+                    <Menu />
+                    <span className="sr-only">Toggle menu</span>
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="left" className="w-[240px] sm:w-[300px]">
+                  <div className="px-2 py-6">
+                    <div className="flex items-center mb-6">
+                      <ShoppingBag className="h-6 w-6 mr-2" />
+                      <span className="font-bold text-lg">Store Manager</span>
+                    </div>
+                    <nav className="flex flex-col space-y-1">
+                      {navItems.map((item) => (
+                        <NavLink key={item.path} {...item} />
+                      ))}
+                    </nav>
+                  </div>
+                </SheetContent>
+              </Sheet>
+            </div>
+          </div>
+        </div>
+      </div>
     </header>
   );
 }
